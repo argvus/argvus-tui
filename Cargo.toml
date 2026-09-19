@@ -1,0 +1,25 @@
+[workspace]
+resolver = "2"
+members = ["crates/argvus-tui", "crates/argvus-theme"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-only"
+rust-version = "1.95"
+authors = ["ARGVUS"]
+repository = "https://github.com/argvus/argvus-tui"
+homepage = "https://github.com/argvus/argvus-tui"
+
+[workspace.dependencies]
+argvus-i18n = { package = "argvus-i18n-core", path = "../argvus-i18n/crates/core" }
+crossterm = "0.29"
+ratatui = "0.30.2"
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp"] }
+ratatui-image = { version = "11.0.8", default-features = false, features = ["crossterm", "image-defaults"] }
+resvg = { version = "0.48", default-features = false, features = ["text"] }
+unicode-width = "0.2"
+
+[profile.release]
+lto = true
+strip = true
