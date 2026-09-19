@@ -8,11 +8,27 @@ use std::path::{Path, PathBuf};
 /// Defines the constant `DEFAULT_THEME`. Its explicit shape preserves the contract consumed by the rest of the workspace and keeps the intent visible as the module evolves.
 pub const DEFAULT_THEME: &str = "argvus-dark-aether";
 
+/// Official ARGVUS TUI theme identifiers accepted by pre-authentication
+/// surfaces and shared theme consumers.
+pub const OFFICIAL_THEMES: &[&str] = &[
+  "argvus-dark-aether",
+  "argvus-dark-aether-float",
+  "argvus-dark-silver",
+  "argvus-dark-silver-float",
+  "argvus-dark-slate",
+  "argvus-dark-slate-float",
+  "argvus-dark-universe",
+  "argvus-dark-universe-float",
+  "argvus-light-veil",
+  "argvus-light-veil-float",
+];
+
 /// Represents `Loader`. Its explicit shape preserves the contract consumed by the rest of the workspace and keeps the intent visible as the module evolves.
 pub struct Loader {
   resource_dir: PathBuf,
   active_file: PathBuf,
   cache_file: PathBuf,
+  active_name_override: Option<String>,
 }
 
 impl Loader {
@@ -41,11 +57,25 @@ impl Loader {
       resource_dir,
       active_file: argvus_config_home().join(".active-theme"),
       cache_file: cache_home.join("argvus-control-center/theme.css"),
+      active_name_override: None,
     }
+  }
+
+  /// Creates a loader whose active theme comes from a validated external
+  /// selection instead of the current process user's private config.
+  ///
+  /// This is used by pre-authentication surfaces, which run as the `greeter`
+  /// account and cannot safely read a target user's `$HOME` before login.
+  pub fn with_active_name(mut self, name: &str) -> Self {
+    self.active_name_override = Some(normalize_theme_name(name).to_string());
+    self
   }
 
   /// Executes the `active_name` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
   pub fn active_name(&self) -> String {
+    if let Some(name) = &self.active_name_override {
+      return name.clone();
+    }
     fs::read_to_string(&self.active_file)
       .ok()
       .map(|value| value.trim().to_string())
@@ -65,6 +95,21 @@ impl Loader {
         .join(format!("{active}.css")),
       self.cache_file.clone(),
     ]
+  }
+}
+
+/// Returns whether `name` is an official ARGVUS theme identifier.
+pub fn is_official_theme(name: &str) -> bool {
+  OFFICIAL_THEMES.contains(&name)
+}
+
+/// Normalizes untrusted or missing theme state to the safe ARGVUS default.
+pub fn normalize_theme_name(name: &str) -> &str {
+  let name = name.trim();
+  if is_official_theme(name) {
+    name
+  } else {
+    DEFAULT_THEME
   }
 }
 
@@ -178,5 +223,19 @@ mod tests {
       count += 1;
     }
     assert!(count >= 10, "expected all packaged ARGVUS themes");
+  }
+
+  #[test]
+  fn official_theme_validation_covers_the_declared_families() {
+    for name in [
+      "argvus-dark-aether",
+      "argvus-dark-silver",
+      "argvus-dark-universe",
+      "argvus-light-veil",
+    ] {
+      assert!(is_official_theme(name));
+      assert_eq!(normalize_theme_name(name), name);
+    }
+    assert_eq!(normalize_theme_name("invalid"), DEFAULT_THEME);
   }
 }

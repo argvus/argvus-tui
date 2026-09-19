@@ -37,6 +37,12 @@ impl Theme {
   pub fn load() -> Self {
     resolver::resolve(&loader::Loader::new())
   }
+
+  /// Loads a theme selected by an external account or pre-authentication
+  /// source without changing process-wide XDG environment variables.
+  pub fn load_for_theme_name(name: &str) -> Self {
+    resolver::resolve(&loader::Loader::new().with_active_name(name))
+  }
 }
 
 #[cfg(test)]
@@ -49,5 +55,17 @@ mod tests {
     let theme = Theme::load();
     assert!(!theme.name.is_empty());
     assert_ne!(theme.background, theme.foreground);
+  }
+
+  #[test]
+  fn load_for_theme_name_uses_external_selection() {
+    let theme = Theme::load_for_theme_name("argvus-dark-silver");
+    assert_eq!(theme.name, "argvus-dark-silver");
+  }
+
+  #[test]
+  fn load_for_theme_name_falls_back_for_unknown_selection() {
+    let theme = Theme::load_for_theme_name("../../outside");
+    assert_eq!(theme.name, loader::DEFAULT_THEME);
   }
 }
