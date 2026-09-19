@@ -9,11 +9,11 @@ pub const ICON_TEXT_GAP: &str = " ";
 
 /// Render a consistently spaced icon/label pair for legacy string-based rows.
 pub fn icon_label(icon: &str, label: impl AsRef<str>) -> String {
-    if icon.is_empty() {
-        label.as_ref().to_owned()
-    } else {
-        format!("{icon}{ICON_TEXT_GAP}{}", label.as_ref())
-    }
+  if icon.is_empty() {
+    label.as_ref().to_owned()
+  } else {
+    format!("{icon}{ICON_TEXT_GAP}{}", label.as_ref())
+  }
 }
 
 /// Nerd Fonts: nf-md-network
@@ -125,81 +125,81 @@ pub const EFFECT: &str = "\u{f0068}";
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+  use super::*;
 
-    /// Defines the constant `ALL`. Its explicit shape preserves the contract consumed by the rest of the workspace and keeps the intent visible as the module evolves.
-    const ALL: &[&str] = &[
-        NETWORK,
-        WIFI,
-        ETHERNET,
-        VPN,
-        DNS,
-        SEARCH,
-        BLUETOOTH,
-        AUDIO,
-        SPEAKER,
-        MICROPHONE,
-        HARDWARE,
-        CPU,
-        GPU,
-        MEMORY,
-        POWER,
-        SETTINGS,
-        SERVICES,
-        USER,
-        LOGS,
-        WARNING,
-        BOOT,
-        PACKAGES,
-        INSTALLED,
-        UPDATE,
-        HISTORY,
-        STORAGE,
-        DIAGNOSTICS,
-        APPS,
-        FONTS,
-        INFO,
-        SUCCESS,
-        ERROR,
-        REFRESH,
-        LINK,
-        MONITOR,
-        KEYBOARD,
-        IMAGE,
-        PALETTE,
-        MOUSE,
-        FOLDER,
-        LOCK,
-        BATTERY,
-        USERS,
-        TEXT_EDITOR,
-        PDF,
-        VIDEO,
-        MUSIC,
-        CLOCK,
-        SATELLITE,
-        RULER,
-        EFFECT,
-        BELL,
-        BELL_OFF,
-    ];
+  /// Defines the constant `ALL`. Its explicit shape preserves the contract consumed by the rest of the workspace and keeps the intent visible as the module evolves.
+  const ALL: &[&str] = &[
+    NETWORK,
+    WIFI,
+    ETHERNET,
+    VPN,
+    DNS,
+    SEARCH,
+    BLUETOOTH,
+    AUDIO,
+    SPEAKER,
+    MICROPHONE,
+    HARDWARE,
+    CPU,
+    GPU,
+    MEMORY,
+    POWER,
+    SETTINGS,
+    SERVICES,
+    USER,
+    LOGS,
+    WARNING,
+    BOOT,
+    PACKAGES,
+    INSTALLED,
+    UPDATE,
+    HISTORY,
+    STORAGE,
+    DIAGNOSTICS,
+    APPS,
+    FONTS,
+    INFO,
+    SUCCESS,
+    ERROR,
+    REFRESH,
+    LINK,
+    MONITOR,
+    KEYBOARD,
+    IMAGE,
+    PALETTE,
+    MOUSE,
+    FOLDER,
+    LOCK,
+    BATTERY,
+    USERS,
+    TEXT_EDITOR,
+    PDF,
+    VIDEO,
+    MUSIC,
+    CLOCK,
+    SATELLITE,
+    RULER,
+    EFFECT,
+    BELL,
+    BELL_OFF,
+  ];
 
-    #[test]
-    /// Executes the `catalog_entries_are_single_non_whitespace_glyphs` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
-    fn catalog_entries_are_single_non_whitespace_glyphs() {
-        for icon in ALL {
-            assert!(!icon.is_empty());
-            assert_eq!(icon.trim(), *icon);
-            assert!(!icon.chars().any(char::is_whitespace));
-            assert_eq!(crate::text::display_width(icon), 1, "{icon:?}");
-        }
+  #[test]
+  /// Executes the `catalog_entries_are_single_non_whitespace_glyphs` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
+  fn catalog_entries_are_single_non_whitespace_glyphs() {
+    for icon in ALL {
+      assert!(!icon.is_empty());
+      assert_eq!(icon.trim(), *icon);
+      assert!(!icon.chars().any(char::is_whitespace));
+      assert_eq!(crate::text::display_width(icon), 1, "{icon:?}");
     }
+  }
 
-    #[test]
-    /// Executes the `icon_label_has_stable_geometry_and_safe_narrow_widths` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
-    fn icon_label_has_stable_geometry_and_safe_narrow_widths() {
-        assert_eq!(icon_label(WIFI, "Network"), format!("{WIFI} Network"));
-        assert_eq!(crate::text::display_width(&icon_label(WIFI, "Network")), 9);
-        assert_eq!(icon_label("", "Network"), "Network");
-    }
+  #[test]
+  /// Executes the `icon_label_has_stable_geometry_and_safe_narrow_widths` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
+  fn icon_label_has_stable_geometry_and_safe_narrow_widths() {
+    assert_eq!(icon_label(WIFI, "Network"), format!("{WIFI} Network"));
+    assert_eq!(crate::text::display_width(&icon_label(WIFI, "Network")), 9);
+    assert_eq!(icon_label("", "Network"), "Network");
+  }
 }
