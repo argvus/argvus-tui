@@ -72,6 +72,8 @@ pub const STORAGE: &str = "\u{f02ca}";
 pub const DIAGNOSTICS: &str = "\u{f0151}";
 /// Nerd Fonts: nf-md-apps
 pub const APPS: &str = "\u{f003b}";
+/// Nerd Fonts: nf-md-widgets
+pub const WIDGET: &str = "\u{f072c}";
 /// Nerd Fonts: nf-md-format-font
 pub const FONTS: &str = "\u{f019f}";
 /// Nerd Fonts: nf-md-information
@@ -157,6 +159,7 @@ mod tests {
     STORAGE,
     DIAGNOSTICS,
     APPS,
+    WIDGET,
     FONTS,
     INFO,
     SUCCESS,
