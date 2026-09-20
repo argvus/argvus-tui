@@ -91,6 +91,38 @@ pub fn draw_status(frame: &mut Frame, area: Rect, theme: &Theme, status: &Status
   );
 }
 
+/// Renders a centered loading overlay while a page-owned background job is pending.
+pub fn draw_loading_splash(
+  frame: &mut Frame,
+  area: Rect,
+  theme: &Theme,
+  title: &str,
+  message: &str,
+) {
+  if area.width < 12 || area.height < 3 {
+    return;
+  }
+  let popup = crate::chrome::centered(area, area.width.saturating_sub(8).min(60), 5);
+  frame.render_widget(Clear, popup);
+  frame.render_widget(
+    Paragraph::new(vec![
+      Line::from(Span::styled(
+        "◌",
+        Style::new().fg(theme.accent).add_modifier(Modifier::BOLD),
+      )),
+      Line::from(message),
+    ])
+    .alignment(Alignment::Center)
+    .block(
+      Block::bordered()
+        .title(title)
+        .border_style(Style::new().fg(theme.border_active))
+        .style(Style::new().bg(theme.surface).fg(theme.foreground)),
+    ),
+    popup,
+  );
+}
+
 /// Executes the `status_line_count` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
 pub fn status_line_count(message: &StatusMessage, area_width: u16) -> usize {
   let symbol = status_symbol(message.kind);
