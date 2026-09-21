@@ -30,12 +30,17 @@ pub fn resolve(loader: &Loader) -> Theme {
     .or_else(|| palette.get("argvus_surface"))
     .copied()
     .unwrap_or(fallback::SURFACE_ALT);
-  let accent = get(&palette, "argvus_accent", fallback::ACCENT);
+  let accent = loader
+    .accent_override()
+    .unwrap_or_else(|| get(&palette, "argvus_accent", fallback::ACCENT));
   let muted = get(&palette, "argvus_muted", fallback::MUTED);
   let border = composite(get(&palette, "argvus_border", fallback::BORDER), bg);
   let focus = composite(get(&palette, "argvus_focus", fallback::FOCUS), bg);
   let accent_alpha = composite(
-    get(&palette, "argvus_accent_alpha", Rgba { a: 115, ..accent }),
+    loader
+      .accent_override()
+      .map(|_| Rgba { a: 115, ..accent })
+      .unwrap_or_else(|| get(&palette, "argvus_accent_alpha", Rgba { a: 115, ..accent })),
     bg,
   );
   let danger = get(

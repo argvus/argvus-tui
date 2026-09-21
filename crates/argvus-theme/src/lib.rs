@@ -43,6 +43,16 @@ impl Theme {
   pub fn load_for_theme_name(name: &str) -> Self {
     resolver::resolve(&loader::Loader::new().with_active_name(name))
   }
+
+  /// Loads an externally selected official theme with an optional validated
+  /// accent used by pre-authentication surfaces.
+  pub fn load_for_theme_name_and_accent(name: &str, accent: Option<&str>) -> Self {
+    let mut loader = loader::Loader::new().with_active_name(name);
+    if let Some(value) = accent {
+      loader = loader.with_accent_override(value);
+    }
+    resolver::resolve(&loader)
+  }
 }
 
 #[cfg(test)]
@@ -67,5 +77,21 @@ mod tests {
   fn load_for_theme_name_falls_back_for_unknown_selection() {
     let theme = Theme::load_for_theme_name("../../outside");
     assert_eq!(theme.name, loader::DEFAULT_THEME);
+  }
+
+  #[test]
+  fn load_for_theme_name_applies_valid_accent_override() {
+    let theme = Theme::load_for_theme_name_and_accent("argvus-dark-silver", Some("#123456"));
+    assert_eq!(theme.accent, Color::Rgb(0x12, 0x34, 0x56));
+    assert_eq!(theme.selected_background, Color::Rgb(0x12, 0x34, 0x56));
+  }
+
+  #[test]
+  fn load_for_theme_name_ignores_invalid_accent_override() {
+    let theme = Theme::load_for_theme_name_and_accent("argvus-dark-silver", Some("red"));
+    assert_eq!(
+      theme.accent,
+      Theme::load_for_theme_name("argvus-dark-silver").accent
+    );
   }
 }

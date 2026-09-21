@@ -5,6 +5,8 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use super::parser::{self, Rgba};
+
 /// Defines the constant `DEFAULT_THEME`. Its explicit shape preserves the contract consumed by the rest of the workspace and keeps the intent visible as the module evolves.
 pub const DEFAULT_THEME: &str = "argvus-dark-aether";
 
@@ -29,6 +31,7 @@ pub struct Loader {
   active_file: PathBuf,
   cache_file: PathBuf,
   active_name_override: Option<String>,
+  accent_override: Option<Rgba>,
 }
 
 impl Loader {
@@ -58,6 +61,7 @@ impl Loader {
       active_file: argvus_config_home().join(".active-theme"),
       cache_file: cache_home.join("argvus-control-center/theme.css"),
       active_name_override: None,
+      accent_override: None,
     }
   }
 
@@ -69,6 +73,26 @@ impl Loader {
   pub fn with_active_name(mut self, name: &str) -> Self {
     self.active_name_override = Some(normalize_theme_name(name).to_string());
     self
+  }
+
+  /// Applies a validated opaque accent supplied by a pre-authentication
+  /// projection. Invalid values are ignored so callers retain the theme
+  /// palette as the safe fallback.
+  pub fn with_accent_override(mut self, accent: &str) -> Self {
+    let accent = accent.trim();
+    if accent.len() == 7
+      && accent.starts_with('#')
+      && accent[1..]
+        .chars()
+        .all(|character| character.is_ascii_hexdigit())
+    {
+      self.accent_override = parser::parse_color(accent);
+    }
+    self
+  }
+
+  pub fn accent_override(&self) -> Option<Rgba> {
+    self.accent_override
   }
 
   /// Executes the `active_name` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
