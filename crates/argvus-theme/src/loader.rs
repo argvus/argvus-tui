@@ -13,6 +13,10 @@ pub const DEFAULT_THEME: &str = "argvus-dark-aether";
 /// Official ARGVUS TUI theme identifiers accepted by pre-authentication
 /// surfaces and shared theme consumers.
 pub const OFFICIAL_THEMES: &[&str] = &[
+  "argvus-onedark",
+  "argvus-onedark-float",
+  "argvus-dracula",
+  "argvus-dracula-float",
   "argvus-dark-aether",
   "argvus-dark-aether-float",
   "argvus-dark-silver",
@@ -23,6 +27,14 @@ pub const OFFICIAL_THEMES: &[&str] = &[
   "argvus-dark-universe-float",
   "argvus-light-veil",
   "argvus-light-veil-float",
+  "argvus-frost",
+  "argvus-frost-float",
+  "argvus-catppuccin-latte",
+  "argvus-catppuccin-latte-float",
+  "argvus-rosepine",
+  "argvus-rosepine-float",
+  "argvus-tokyo-night",
+  "argvus-tokyo-night-float",
 ];
 
 /// Represents `Loader`. Its explicit shape preserves the contract consumed by the rest of the workspace and keeps the intent visible as the module evolves.
@@ -253,9 +265,13 @@ mod tests {
   fn official_theme_validation_covers_the_declared_families() {
     for name in [
       "argvus-dark-aether",
+      "argvus-onedark",
+      "argvus-dracula",
       "argvus-dark-silver",
       "argvus-dark-universe",
       "argvus-light-veil",
+      "argvus-rosepine",
+      "argvus-tokyo-night",
     ] {
       assert!(is_official_theme(name));
       assert_eq!(normalize_theme_name(name), name);
