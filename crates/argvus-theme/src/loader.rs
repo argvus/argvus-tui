@@ -25,6 +25,10 @@ pub const OFFICIAL_THEMES: &[&str] = &[
   "argvus-dark-slate-float",
   "argvus-dark-universe",
   "argvus-dark-universe-float",
+  "argvus-dark-gruvbox-high",
+  "argvus-dark-gruvbox-high-float",
+  "argvus-dark-gruvbox",
+  "argvus-dark-gruvbox-float",
   "argvus-light-veil",
   "argvus-light-veil-float",
   "argvus-github-light",
@@ -273,12 +277,15 @@ mod tests {
 
   #[test]
   fn official_theme_validation_covers_the_declared_families() {
+    assert_eq!(OFFICIAL_THEMES.len(), 36);
     for name in [
       "argvus-dark-aether",
       "argvus-onedark",
       "argvus-dark-dracula",
       "argvus-dark-silver",
       "argvus-dark-universe",
+      "argvus-dark-gruvbox-high",
+      "argvus-dark-gruvbox",
       "argvus-light-veil",
       "argvus-github-light",
       "argvus-light-solarized",
