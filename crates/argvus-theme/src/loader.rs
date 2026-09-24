@@ -41,6 +41,10 @@ pub const OFFICIAL_THEMES: &[&str] = &[
   "argvus-dark-tokio-night-float",
   "argvus-dark-solitude",
   "argvus-dark-solitude-float",
+  "argvus-dark-sunset",
+  "argvus-dark-sunset-float",
+  "argvus-dark-hackerman",
+  "argvus-dark-hackerman-float",
 ];
 
 /// Represents `Loader`. Its explicit shape preserves the contract consumed by the rest of the workspace and keeps the intent visible as the module evolves.
@@ -281,6 +285,8 @@ mod tests {
       "argvus-dark-rosepine",
       "argvus-dark-tokio-night",
       "argvus-dark-solitude",
+      "argvus-dark-sunset",
+      "argvus-dark-hackerman",
     ] {
       assert!(is_official_theme(name));
       assert_eq!(normalize_theme_name(name), name);
