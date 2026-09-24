@@ -15,8 +15,8 @@ pub const DEFAULT_THEME: &str = "argvus-dark-aether";
 pub const OFFICIAL_THEMES: &[&str] = &[
   "argvus-onedark",
   "argvus-onedark-float",
-  "argvus-dracula",
-  "argvus-dracula-float",
+  "argvus-dark-dracula",
+  "argvus-dark-dracula-float",
   "argvus-dark-aether",
   "argvus-dark-aether-float",
   "argvus-dark-silver",
@@ -27,14 +27,20 @@ pub const OFFICIAL_THEMES: &[&str] = &[
   "argvus-dark-universe-float",
   "argvus-light-veil",
   "argvus-light-veil-float",
-  "argvus-frost",
-  "argvus-frost-float",
-  "argvus-catppuccin-latte",
-  "argvus-catppuccin-latte-float",
-  "argvus-rosepine",
-  "argvus-rosepine-float",
-  "argvus-tokyo-night",
-  "argvus-tokyo-night-float",
+  "argvus-github-light",
+  "argvus-github-light-float",
+  "argvus-light-solarized",
+  "argvus-light-solarized-float",
+  "argvus-light-frost",
+  "argvus-light-frost-float",
+  "argvus-light-catppuccin-latte",
+  "argvus-light-catppuccin-latte-float",
+  "argvus-dark-rosepine",
+  "argvus-dark-rosepine-float",
+  "argvus-dark-tokio-night",
+  "argvus-dark-tokio-night-float",
+  "argvus-dark-solitude",
+  "argvus-dark-solitude-float",
 ];
 
 /// Represents `Loader`. Its explicit shape preserves the contract consumed by the rest of the workspace and keeps the intent visible as the module evolves.
@@ -266,12 +272,15 @@ mod tests {
     for name in [
       "argvus-dark-aether",
       "argvus-onedark",
-      "argvus-dracula",
+      "argvus-dark-dracula",
       "argvus-dark-silver",
       "argvus-dark-universe",
       "argvus-light-veil",
-      "argvus-rosepine",
-      "argvus-tokyo-night",
+      "argvus-github-light",
+      "argvus-light-solarized",
+      "argvus-dark-rosepine",
+      "argvus-dark-tokio-night",
+      "argvus-dark-solitude",
     ] {
       assert!(is_official_theme(name));
       assert_eq!(normalize_theme_name(name), name);
