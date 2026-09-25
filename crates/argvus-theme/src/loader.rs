@@ -53,6 +53,10 @@ pub const OFFICIAL_THEMES: &[&str] = &[
   "gruvbox-light-float",
   "solarized-light",
   "solarized-light-float",
+  "one-light",
+  "one-light-float",
+  "everforest-light",
+  "everforest-light-float",
 ];
 
 /// Represents `Loader`. Its explicit shape preserves the contract consumed by the rest of the workspace and keeps the intent visible as the module evolves.
@@ -324,7 +328,7 @@ mod tests {
 
   #[test]
   fn official_theme_validation_covers_the_declared_families() {
-    assert_eq!(OFFICIAL_THEMES.len(), 40);
+    assert_eq!(OFFICIAL_THEMES.len(), 44);
     for name in [
       "argvus-dark",
       "one-dark",
@@ -337,6 +341,7 @@ mod tests {
       "github-light",
       "solarized-light",
       "gruvbox-light",
+      "everforest-light",
       "rose-pine",
       "tokyo-night",
       "solitude",
