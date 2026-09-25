@@ -69,8 +69,8 @@ mod tests {
 
   #[test]
   fn load_for_theme_name_uses_external_selection() {
-    let theme = Theme::load_for_theme_name("argvus-dark-silver");
-    assert_eq!(theme.name, "argvus-dark-silver");
+    let theme = Theme::load_for_theme_name("silver-dark");
+    assert_eq!(theme.name, "silver-dark");
   }
 
   #[test]
@@ -81,17 +81,17 @@ mod tests {
 
   #[test]
   fn load_for_theme_name_applies_valid_accent_override() {
-    let theme = Theme::load_for_theme_name_and_accent("argvus-dark-silver", Some("#123456"));
+    let theme = Theme::load_for_theme_name_and_accent("silver-dark", Some("#123456"));
     assert_eq!(theme.accent, Color::Rgb(0x12, 0x34, 0x56));
     assert_eq!(theme.selected_background, Color::Rgb(0x12, 0x34, 0x56));
   }
 
   #[test]
   fn load_for_theme_name_ignores_invalid_accent_override() {
-    let theme = Theme::load_for_theme_name_and_accent("argvus-dark-silver", Some("red"));
+    let theme = Theme::load_for_theme_name_and_accent("silver-dark", Some("red"));
     assert_eq!(
       theme.accent,
-      Theme::load_for_theme_name("argvus-dark-silver").accent
+      Theme::load_for_theme_name("silver-dark").accent
     );
   }
 }

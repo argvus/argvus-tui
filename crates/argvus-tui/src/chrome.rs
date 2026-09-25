@@ -177,7 +177,7 @@ mod tests {
   /// Executes the `header_does_not_show_theme_name` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
   fn header_does_not_show_theme_name() {
     let mut theme = argvus_theme::Theme::load();
-    theme.name = "argvus-dark-aether".into();
+    theme.name = "argvus-dark".into();
     let mut terminal = Terminal::new(TestBackend::new(120, 3)).unwrap();
     terminal
       .draw(|frame| {
@@ -200,6 +200,6 @@ mod tests {
       .iter()
       .map(|cell| cell.symbol())
       .collect::<String>();
-    assert!(!rendered.contains("argvus-dark-aether"), "{rendered}");
+    assert!(!rendered.contains("argvus-dark"), "{rendered}");
   }
 }

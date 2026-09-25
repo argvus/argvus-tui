@@ -71,7 +71,7 @@ pub fn resolve(loader: &Loader) -> Theme {
     border: color(border),
     border_active: color(focus),
     muted: color(muted),
-    link: color(if loader.active_name().starts_with("argvus-dark-silver") {
+    link: color(if loader.active_name().starts_with("silver-dark") {
       Rgba::opaque(255, 255, 255)
     } else {
       accent

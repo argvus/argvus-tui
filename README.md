@@ -39,12 +39,12 @@ The recommended minimum terminal size exposed by the crate is `60x18`.
 The shared semantic theme layer for TUI consumers. It loads ARGVUS CSS theme
 resources, resolves palette references, composites alpha colors, and exposes a
 `Theme` suitable for Ratatui styles. When resources or user selection are
-missing or invalid, it falls back to the safe `argvus-dark-aether` theme.
+missing or invalid, it falls back to the safe `argvus-dark` theme.
 
 Theme selection can be supplied explicitly for pre-authentication surfaces:
 
 ```rust
-let theme = argvus_theme::Theme::load_for_theme_name("argvus-dark-silver");
+let theme = argvus_theme::Theme::load_for_theme_name("silver-dark");
 ```
 
 The regular loader reads the active theme from the ARGVUS configuration and
