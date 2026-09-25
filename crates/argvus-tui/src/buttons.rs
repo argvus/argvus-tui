@@ -163,4 +163,33 @@ mod tests {
     let cell = terminal.backend().buffer().cell((0, 3)).unwrap();
     assert_eq!(cell.bg, theme.surface);
   }
+
+  #[test]
+  fn button_labels_are_wrapped_once_by_the_renderer() {
+    let theme = theme();
+    let mut terminal = ratatui::Terminal::new(ratatui::backend::TestBackend::new(32, 2)).unwrap();
+    terminal
+      .draw(|frame| {
+        draw(
+          frame,
+          ratatui::layout::Rect::new(0, 0, 32, 1),
+          &[Button::new("Apply", ButtonKind::Primary)],
+          0,
+          &theme,
+        );
+      })
+      .unwrap();
+    let rendered = (0..9)
+      .map(|column| {
+        terminal
+          .backend()
+          .buffer()
+          .cell((column, 0))
+          .unwrap()
+          .symbol()
+      })
+      .collect::<String>();
+    assert_eq!(rendered, "[ Apply ]");
+    assert!(!rendered.contains("[ ["));
+  }
 }
