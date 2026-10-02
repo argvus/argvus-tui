@@ -14,3 +14,9 @@ ratatui.workspace = true
 ratatui-image.workspace = true
 resvg.workspace = true
 unicode-width.workspace = true
+clap.workspace = true
+serde_json = "1.0"
+
+[[bin]]
+name = "argvus-appearance"
+path = "src/bin/argvus-appearance.rs"

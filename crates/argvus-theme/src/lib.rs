@@ -4,6 +4,7 @@
 //! the UI consumes normalized models and results.
 use ratatui::style::Color;
 
+pub mod discovery;
 pub mod fallback;
 pub mod loader;
 pub mod parser;

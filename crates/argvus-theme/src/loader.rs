@@ -92,7 +92,7 @@ impl Loader {
       .unwrap_or_else(|| home().join(".cache"));
     Self {
       resource_dir,
-      active_file: argvus_config_home().join(".active-theme"),
+      active_file: argvus_data_home().join(".active-theme"),
       cache_file: cache_home.join("argvus-control-center/theme.css"),
       active_name_override: None,
       accent_override: None,
@@ -233,6 +233,12 @@ fn argvus_config_home() -> PathBuf {
     .join("argvus")
 }
 
+/// Returns the mutable runtime tree inside the ARGVUS configuration root.
+/// The root holds exactly two entries: `config/` and `data/`.
+fn argvus_data_home() -> PathBuf {
+  argvus_config_home().join("data")
+}
+
 /// Executes the `home` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
 fn home() -> PathBuf {
   std::env::var_os("HOME")
@@ -242,29 +248,37 @@ fn home() -> PathBuf {
 
 /// Executes the `development_resources_dir` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
 fn development_resources_dir() -> PathBuf {
-  let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-  let sources = [
-    manifest_dir.join("../../../argvus-appearance/src/usr/share/argvus/appearance/config/tui"),
-    manifest_dir.join("../../src/usr/share/argvus/control-center/config"),
-  ];
-  if let Some(source) = sources.into_iter().find(|candidate| candidate.is_dir()) {
-    return source;
+  #[cfg(not(debug_assertions))]
+  {
+    return PathBuf::from("resources");
   }
-  std::env::current_dir()
-    .ok()
-    .and_then(|dir| {
-      [
-        dir.join("../argvus-appearance/src/usr/share/argvus/appearance/config/tui"),
-        dir.join("src/usr/share/argvus/control-center/config"),
-        dir.join("../../src/usr/share/argvus/control-center/config"),
-        dir.join("resources"),
-        dir.join("argvus-control-center/resources"),
-        dir.join("../../resources"),
-      ]
-      .into_iter()
-      .find(|candidate| candidate.is_dir())
-    })
-    .unwrap_or_else(|| PathBuf::from("resources"))
+
+  #[cfg(debug_assertions)]
+  {
+    let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let sources = [
+      manifest_dir.join("../../../argvus-appearance/src/usr/share/argvus/appearance/config/tui"),
+      manifest_dir.join("../../src/usr/share/argvus/control-center/config"),
+    ];
+    if let Some(source) = sources.into_iter().find(|candidate| candidate.is_dir()) {
+      return source;
+    }
+    std::env::current_dir()
+      .ok()
+      .and_then(|dir| {
+        [
+          dir.join("../argvus-appearance/src/usr/share/argvus/appearance/config/tui"),
+          dir.join("src/usr/share/argvus/control-center/config"),
+          dir.join("../../src/usr/share/argvus/control-center/config"),
+          dir.join("resources"),
+          dir.join("argvus-control-center/resources"),
+          dir.join("../../resources"),
+        ]
+        .into_iter()
+        .find(|candidate| candidate.is_dir())
+      })
+      .unwrap_or_else(|| PathBuf::from("resources"))
+  }
 }
 
 /// Retrieves data for `read_recursive` without mixing collection with TUI rendering. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
