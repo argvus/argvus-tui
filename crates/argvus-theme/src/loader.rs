@@ -157,8 +157,39 @@ impl Loader {
 }
 
 /// Returns whether `name` is an official ARGVUS theme identifier.
+///
+/// Built-in identifiers are listed in `OFFICIAL_THEMES`. A drop-in theme
+/// package is official as soon as its manifest is installed, so it needs no
+/// entry in this crate.
 pub fn is_official_theme(name: &str) -> bool {
-  OFFICIAL_THEMES.contains(&name)
+  OFFICIAL_THEMES.contains(&name) || drop_in_manifest_installed(name)
+}
+
+fn drop_in_manifest_installed(name: &str) -> bool {
+  let system_config = std::env::var_os("ARGVUS_SYSTEM_CONFIG")
+    .map(std::path::PathBuf::from)
+    .unwrap_or_else(|| std::path::PathBuf::from("/usr/share/argvus"));
+  drop_in_manifest_installed_in(&system_config, name)
+}
+
+/// Checks `appearance/themes.d/<family>/theme.toml` under `system_config`.
+/// `name` is untrusted (it can come from the greeter or a saved profile), so
+/// it is validated as a theme ID before it is used as a path component.
+fn drop_in_manifest_installed_in(system_config: &std::path::Path, name: &str) -> bool {
+  // Float is a layout mode of the same family; the manifest is keyed by family.
+  let family = name.strip_suffix("-float").unwrap_or(name);
+  let is_valid_family = !family.is_empty()
+    && !family.starts_with('-')
+    && !family.ends_with('-')
+    && family.chars().all(|character| {
+      character.is_ascii_lowercase() || character.is_ascii_digit() || character == '-'
+    });
+  is_valid_family
+    && system_config
+      .join("appearance/themes.d")
+      .join(family)
+      .join("theme.toml")
+      .is_file()
 }
 
 /// Normalizes untrusted or missing theme state to the safe ARGVUS default.
@@ -338,6 +369,35 @@ mod tests {
       count += 1;
     }
     assert!(count >= 10, "expected all packaged ARGVUS themes");
+  }
+
+  #[test]
+  fn drop_in_theme_is_official_only_when_its_manifest_is_installed() {
+    // A process-unique directory keeps parallel test runs isolated; the crate
+    // has no tempfile dependency, so the directory is removed by hand.
+    let system_config =
+      std::env::temp_dir().join(format!("argvus-theme-manifest-test-{}", std::process::id()));
+    let family_dir = system_config.join("appearance/themes.d/nord-light");
+    std::fs::create_dir_all(&family_dir).unwrap();
+    std::fs::write(family_dir.join("theme.toml"), "id = \"nord-light\"\n").unwrap();
+
+    assert!(drop_in_manifest_installed_in(&system_config, "nord-light"));
+    assert!(drop_in_manifest_installed_in(
+      &system_config,
+      "nord-light-float"
+    ));
+    assert!(!drop_in_manifest_installed_in(
+      &system_config,
+      "not-installed"
+    ));
+    // Untrusted names must never escape the themes directory.
+    assert!(!drop_in_manifest_installed_in(
+      &system_config,
+      "../nord-light"
+    ));
+    assert!(!drop_in_manifest_installed_in(&system_config, "Nord-Light"));
+
+    std::fs::remove_dir_all(&system_config).unwrap();
   }
 
   #[test]
