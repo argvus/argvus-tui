@@ -237,6 +237,38 @@ pub const TRUST: &str = "\u{f0565}";
 pub const VISIBLE: &str = "\u{f0208}";
 /// Nerd Fonts: nf-md-power-plug
 pub const POWER_PLUG: &str = "\u{f06a5}";
+/// Nerd Fonts: nf-md-key
+pub const KEY: &str = "\u{f0306}";
+/// Nerd Fonts: nf-md-lock-open
+pub const LOCK_OPEN: &str = "\u{f033f}";
+/// Nerd Fonts: nf-md-lock-reset
+pub const LOCK_RESET: &str = "\u{f0773}";
+/// Nerd Fonts: nf-md-account-circle
+pub const AVATAR: &str = "\u{f0009}";
+/// Nerd Fonts: nf-md-image-remove
+pub const IMAGE_REMOVE: &str = "\u{f1418}";
+/// Nerd Fonts: nf-md-account-remove
+pub const ACCOUNT_REMOVE: &str = "\u{f0015}";
+/// Nerd Fonts: nf-md-delete-forever
+pub const DELETE_FOREVER: &str = "\u{f05e8}";
+/// Nerd Fonts: nf-md-account-cog
+pub const ACCOUNT_COG: &str = "\u{f1370}";
+/// Nerd Fonts: nf-md-account-star
+pub const ACCOUNT_STAR: &str = "\u{f0017}";
+/// Nerd Fonts: nf-md-account-group
+pub const GROUP: &str = "\u{f0849}";
+/// Nerd Fonts: nf-md-card-account-details
+pub const ID_CARD: &str = "\u{f05d2}";
+/// Nerd Fonts: nf-md-keyboard-variant
+pub const KEYBOARD_VARIANT: &str = "\u{f0313}";
+/// Nerd Fonts: nf-md-keyboard-off
+pub const KEYBOARD_OFF: &str = "\u{f0310}";
+/// Nerd Fonts: nf-md-format-size
+pub const FONT_SIZE: &str = "\u{f027f}";
+/// Nerd Fonts: nf-md-script-text
+pub const SCRIPT: &str = "\u{f0bc2}";
+/// Nerd Fonts: nf-md-shield-refresh
+pub const SHIELD_REFRESH: &str = "\u{f00aa}";
 
 #[cfg(test)]
 mod tests {
@@ -354,6 +386,22 @@ mod tests {
     TRUST,
     VISIBLE,
     POWER_PLUG,
+    KEY,
+    LOCK_OPEN,
+    LOCK_RESET,
+    AVATAR,
+    IMAGE_REMOVE,
+    ACCOUNT_REMOVE,
+    DELETE_FOREVER,
+    ACCOUNT_COG,
+    ACCOUNT_STAR,
+    GROUP,
+    ID_CARD,
+    KEYBOARD_VARIANT,
+    KEYBOARD_OFF,
+    FONT_SIZE,
+    SCRIPT,
+    SHIELD_REFRESH,
   ];
 
   #[test]
