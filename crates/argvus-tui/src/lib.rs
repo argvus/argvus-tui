@@ -6,6 +6,7 @@ pub mod buttons;
 pub mod chrome;
 pub mod components;
 pub mod confirm;
+pub mod hints;
 pub mod icons;
 pub mod image;
 pub mod menu;
