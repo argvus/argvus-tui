@@ -269,6 +269,30 @@ pub const FONT_SIZE: &str = "\u{f027f}";
 pub const SCRIPT: &str = "\u{f0bc2}";
 /// Nerd Fonts: nf-md-shield-refresh
 pub const SHIELD_REFRESH: &str = "\u{f00aa}";
+/// Nerd Fonts: nf-md-aspect-ratio
+pub const ASPECT_RATIO: &str = "\u{f0a24}";
+/// Nerd Fonts: nf-md-sine-wave
+pub const SINE_WAVE: &str = "\u{f095b}";
+/// Nerd Fonts: nf-md-magnify-plus-outline
+pub const ZOOM: &str = "\u{f06ed}";
+/// Nerd Fonts: nf-md-arrow-all
+pub const ARROW_ALL: &str = "\u{f0041}";
+/// Nerd Fonts: nf-md-screen-rotation
+pub const ROTATE: &str = "\u{f0475}";
+/// Nerd Fonts: nf-md-monitor-multiple
+pub const MONITOR_MULTIPLE: &str = "\u{f037a}";
+/// Nerd Fonts: nf-md-sync
+pub const SYNC: &str = "\u{f04e6}";
+/// Nerd Fonts: nf-md-hdr
+pub const HDR: &str = "\u{f0d7d}";
+/// Nerd Fonts: nf-md-brightness-6
+pub const BRIGHTNESS: &str = "\u{f00df}";
+/// Nerd Fonts: nf-md-contrast-box
+pub const CONTRAST: &str = "\u{f0196}";
+/// Nerd Fonts: nf-md-view-grid
+pub const GRID: &str = "\u{f0570}";
+/// Nerd Fonts: nf-md-star
+pub const STAR: &str = "\u{f04ce}";
 
 #[cfg(test)]
 mod tests {
@@ -402,6 +426,18 @@ mod tests {
     FONT_SIZE,
     SCRIPT,
     SHIELD_REFRESH,
+    ASPECT_RATIO,
+    SINE_WAVE,
+    ZOOM,
+    ARROW_ALL,
+    ROTATE,
+    MONITOR_MULTIPLE,
+    SYNC,
+    HDR,
+    BRIGHTNESS,
+    CONTRAST,
+    GRID,
+    STAR,
   ];
 
   #[test]
