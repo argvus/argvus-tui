@@ -293,6 +293,10 @@ pub const CONTRAST: &str = "\u{f0196}";
 pub const GRID: &str = "\u{f0570}";
 /// Nerd Fonts: nf-md-star
 pub const STAR: &str = "\u{f04ce}";
+/// Nerd Fonts: nf-md-sort
+pub const SORT: &str = "\u{f04ba}";
+/// Nerd Fonts: nf-md-counter
+pub const COUNTER: &str = "\u{f0199}";
 
 #[cfg(test)]
 mod tests {
@@ -438,6 +442,8 @@ mod tests {
     CONTRAST,
     GRID,
     STAR,
+    SORT,
+    COUNTER,
   ];
 
   #[test]
