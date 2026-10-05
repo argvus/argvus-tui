@@ -297,6 +297,10 @@ pub const STAR: &str = "\u{f04ce}";
 pub const SORT: &str = "\u{f04ba}";
 /// Nerd Fonts: nf-md-counter
 pub const COUNTER: &str = "\u{f0199}";
+/// Nerd Fonts: nf-md-routes
+pub const PROXY: &str = "\u{f046a}";
+/// Nerd Fonts: nf-md-autorenew
+pub const AUTORENEW: &str = "\u{f006a}";
 
 #[cfg(test)]
 mod tests {
@@ -444,6 +448,8 @@ mod tests {
     STAR,
     SORT,
     COUNTER,
+    PROXY,
+    AUTORENEW,
   ];
 
   #[test]
