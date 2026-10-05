@@ -2,7 +2,7 @@
 //!
 //! External tool dependencies remain in backend layers;
 //! the UI consumes normalized models and results.
-use std::io::{self, Stdout};
+use std::io;
 use std::panic;
 
 use crossterm::{
@@ -13,8 +13,10 @@ use crossterm::{
 };
 use ratatui::{Terminal, backend::CrosstermBackend};
 
+use crate::icon_scale::IconScaleBackend;
+
 /// Names the type `TuiTerminal`. Its explicit shape preserves the contract consumed by the rest of the workspace and keeps the intent visible as the module evolves.
-pub type TuiTerminal = Terminal<CrosstermBackend<Stdout>>;
+pub type TuiTerminal = Terminal<IconScaleBackend>;
 
 /// Represents `TerminalGuard`. Its explicit shape preserves the contract consumed by the rest of the workspace and keeps the intent visible as the module evolves.
 pub struct TerminalGuard {
@@ -36,7 +38,8 @@ impl TerminalGuard {
       let _ = disable_raw_mode();
       return Err(error);
     }
-    match Terminal::new(CrosstermBackend::new(stdout)) {
+    let backend = IconScaleBackend::new(CrosstermBackend::new(stdout));
+    match Terminal::new(backend) {
       Ok(terminal) => Ok(Self { terminal }),
       Err(error) => {
         restore();

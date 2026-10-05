@@ -2,11 +2,13 @@
 //!
 //! External tool dependencies remain in backend layers;
 //! the UI consumes normalized models and results.
+pub mod action_buttons;
 pub mod buttons;
 pub mod chrome;
 pub mod components;
 pub mod confirm;
 pub mod hints;
+pub mod icon_scale;
 pub mod icons;
 pub mod image;
 pub mod menu;

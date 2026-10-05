@@ -235,6 +235,8 @@ pub const MUTE: &str = "\u{f0581}";
 pub const TRUST: &str = "\u{f0565}";
 /// Nerd Fonts: nf-md-eye
 pub const VISIBLE: &str = "\u{f0208}";
+/// Nerd Fonts: nf-md-priority-high
+pub const PRIORITY_HIGH: &str = "\u{f0603}";
 /// Nerd Fonts: nf-md-power-plug
 pub const POWER_PLUG: &str = "\u{f06a5}";
 /// Nerd Fonts: nf-md-key
@@ -417,6 +419,7 @@ mod tests {
     MUTE,
     TRUST,
     VISIBLE,
+    PRIORITY_HIGH,
     POWER_PLUG,
     KEY,
     LOCK_OPEN,
