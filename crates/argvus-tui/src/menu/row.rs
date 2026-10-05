@@ -125,6 +125,19 @@ impl<Id> Row<Id> {
     Self::new(None, RowKind::Separator, String::new())
   }
 
+  /// A section title that the cursor skips. It is drawn in the theme's
+  /// accent color, with no ASCII decoration, above the rows of its section.
+  /// [`Row::detail`] adds a dimmed value on the right (for example a
+  /// device's availability).
+  pub fn section(title: impl Into<String>) -> Self {
+    Self::new(None, RowKind::Separator, title)
+  }
+
+  /// Whether this is a section title rather than a plain divider.
+  pub fn is_section(&self) -> bool {
+    self.kind == RowKind::Separator && !self.label.is_empty()
+  }
+
   /// Sets the item's own icon (a glyph from [`crate::icons`]). Ignored on
   /// Info rows and separators, which never carry decorative icons.
   pub fn icon(mut self, glyph: &'static str) -> Self {
@@ -226,6 +239,15 @@ mod tests {
     let action = Row::action(1u8, "Refresh").icon(icons::REFRESH);
     assert_eq!(info.icon_glyph(), None);
     assert_eq!(action.icon_glyph(), Some(icons::REFRESH));
+  }
+
+  #[test]
+  fn section_titles_are_separators_that_carry_a_title() {
+    let section: Row<u8> = Row::section("Account").detail("2");
+    assert_eq!(section.kind(), RowKind::Separator);
+    assert!(section.is_section());
+    assert!(!section.is_selectable());
+    assert!(!Row::<u8>::separator().is_section());
   }
 
   #[test]

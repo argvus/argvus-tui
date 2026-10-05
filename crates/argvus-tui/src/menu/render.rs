@@ -104,6 +104,9 @@ fn row_line<Id>(
   width: usize,
   theme: &Theme,
 ) -> Line<'static> {
+  if row.is_section() {
+    return section_line(row, width, theme);
+  }
   if row.kind() == RowKind::Separator {
     return Line::from(Span::styled(
       SEPARATOR_GLYPH.repeat(width),
@@ -147,6 +150,28 @@ fn row_line<Id>(
     Span::styled(suffix, base),
   ])
   .style(base)
+}
+
+/// Section title: accent and bold, starting in the cursor column so the
+/// section's rows read as indented under it. The optional detail is dimmed
+/// and right-aligned like an Info value.
+fn section_line<Id>(row: &Row<Id>, width: usize, theme: &Theme) -> Line<'static> {
+  let title_style = Style::new()
+    .fg(theme.accent)
+    .bg(theme.background)
+    .add_modifier(Modifier::BOLD);
+  let detail_style = Style::new().fg(theme.muted).bg(theme.background);
+  let prefix = " ";
+  let available = width.saturating_sub(display_width(prefix));
+  let detail = row.detail_text().unwrap_or_default();
+  let (label, detail) = fit_label_and_detail(row.label(), detail, available);
+  let padding = available.saturating_sub(display_width(&label) + display_width(&detail));
+  Line::from(vec![
+    Span::styled(prefix, title_style),
+    Span::styled(label, title_style),
+    Span::styled(" ".repeat(padding), detail_style),
+    Span::styled(detail, detail_style),
+  ])
 }
 
 fn marker_cell(kind: RowKind, width: usize) -> String {
@@ -333,6 +358,24 @@ mod tests {
       "{screen:?}"
     );
     assert!(!screen.iter().any(|line| line.contains("row0")));
+  }
+
+  #[test]
+  fn section_titles_are_drawn_without_decoration_and_skip_the_cursor() {
+    let rows = vec![
+      Row::section("Account").detail("ready"),
+      Row::action(1u8, "Save"),
+    ];
+    let mut state = MenuState::default();
+    let screen = render(&rows, &mut state, 40, 2, false);
+    assert!(screen[0].starts_with("  Account"), "{:?}", screen[0]);
+    assert!(!screen[0].contains("--") && !screen[0].contains(SEPARATOR_GLYPH));
+    assert!(screen[0].trim_end().ends_with("ready"), "{:?}", screen[0]);
+    assert!(
+      screen[1].contains(&format!("{CURSOR} Save")),
+      "{:?}",
+      screen[1]
+    );
   }
 
   #[test]
