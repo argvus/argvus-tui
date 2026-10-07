@@ -147,8 +147,11 @@ fn row_hints(kind: RowKind) -> Vec<Hint> {
 /// shortcuts from `context.extra` go between the row segments and the
 /// global keys, so Back/Help/Quit always close the footer.
 pub fn hints(lang: Lang, context: &HintContext<'_>) -> String {
+  // A page that names its own `←/→` shortcut replaces the generic Adjust hint.
+  let replaces_adjust = context.extra.iter().any(|(keys, _)| *keys == "←/→");
   let page = page_hints(context)
     .into_iter()
+    .filter(|hint| !(replaces_adjust && hint.keys == "←/→"))
     .map(|hint| translate(lang, hint));
   let extra = context
     .extra

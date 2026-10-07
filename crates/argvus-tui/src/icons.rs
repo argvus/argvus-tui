@@ -145,6 +145,10 @@ pub const THEME_MODE: &str = "\u{f050e}";
 pub const WINDOW_FLOAT: &str = "\u{f05b2}";
 /// Nerd Fonts: nf-md-view-split-vertical
 pub const WINDOW_STICKY: &str = "\u{f0bcc}";
+/// Nerd Fonts: nf-md-window-open
+pub const WINDOW_RULES: &str = "\u{f05b1}";
+/// Nerd Fonts: nf-md-folder-multiple
+pub const PROJECTS: &str = "\u{f0253}";
 /// Nerd Fonts: nf-md-format-color-fill
 pub const ACCENT: &str = "\u{f0266}";
 /// Nerd Fonts: nf-md-arrow-up-bold
@@ -374,6 +378,8 @@ mod tests {
     THEME_MODE,
     WINDOW_FLOAT,
     WINDOW_STICKY,
+    WINDOW_RULES,
+    PROJECTS,
     ACCENT,
     ARROW_UP,
     ARROW_DOWN,
