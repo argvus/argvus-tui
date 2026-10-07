@@ -29,7 +29,7 @@ pub fn shell(frame: &mut Frame, area: Rect, theme: &Theme, breadcrumb: &str, hin
     Constraint::Length(2),
   ])
   .split(inner);
-  let title = format!("ARGVUS Control Center > {breadcrumb}");
+  let title = format!("Control Center > {breadcrumb}");
   draw_header(
     frame,
     rows[0],
