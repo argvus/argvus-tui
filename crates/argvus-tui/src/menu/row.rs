@@ -59,6 +59,7 @@ pub struct Row<Id> {
   detail: Option<String>,
   enabled: bool,
   emphasis: Emphasis,
+  marked: bool,
 }
 
 impl<Id> Row<Id> {
@@ -71,6 +72,7 @@ impl<Id> Row<Id> {
       detail: None,
       enabled: true,
       emphasis: Emphasis::Normal,
+      marked: false,
     }
   }
 
@@ -164,6 +166,14 @@ impl<Id> Row<Id> {
     self
   }
 
+  /// Marks the row as the page's default, drawn with `●` in a column of its
+  /// own, before the state marker. The column only appears in lists that
+  /// have at least one marked row, so other lists keep their layout.
+  pub fn marked(mut self, marked: bool) -> Self {
+    self.marked = marked;
+    self
+  }
+
   pub fn id(&self) -> Option<&Id> {
     self.id.as_ref()
   }
@@ -195,6 +205,10 @@ impl<Id> Row<Id> {
 
   pub fn emphasis_kind(&self) -> Emphasis {
     self.emphasis
+  }
+
+  pub fn is_marked(&self) -> bool {
+    self.marked
   }
 
   /// Whether the cursor may stop on this row.
@@ -262,6 +276,14 @@ mod tests {
       Row::destructive(1u8, "Delete").emphasis_kind(),
       Emphasis::Danger
     );
+  }
+
+  #[test]
+  fn marked_rows_keep_the_mark_flag_and_default_to_unmarked() {
+    let plain: Row<u8> = Row::toggle(1, "us", true);
+    let default: Row<u8> = Row::toggle(2, "br", true).marked(true);
+    assert!(!plain.is_marked());
+    assert!(default.is_marked());
   }
 
   #[test]

@@ -4,11 +4,12 @@
 //!
 //! ```text
 //!  > [x] 󰂵 Blur ............................ 40% ›
-//!  │ │   │ │                                 │   └ Submenu marker
-//!  │ │   │ └ label                           └ detail (right-aligned)
-//!  │ │   └ item icon (column dropped when icons are off)
-//!  │ └ state marker: `[x]`/`[ ]` (Toggle) or `●` (Choice)
-//!  └ cursor
+//!  │ │ │ │   │ │                                 │   └ Submenu marker
+//!  │ │ │ │   │ └ label                           └ detail (right-aligned)
+//!  │ │ │ │   └ item icon (column dropped when icons are off)
+//!  │ │ │ └ state marker: `[x]`/`[ ]` (Toggle) or `●` (Choice)
+//!  │ │ └ default mark `●` (column only when a row is marked)
+//!  │ └ cursor
 //! ```
 
 use argvus_theme::Theme;
@@ -29,6 +30,7 @@ const CURSOR: &str = ">";
 const TOGGLE_ON: &str = "[x]";
 const TOGGLE_OFF: &str = "[ ]";
 const CHOICE_CURRENT: &str = "●";
+const DEFAULT_MARK: &str = "●";
 const SUBMENU_MARKER: &str = "›";
 const SEPARATOR_GLYPH: &str = "─";
 
@@ -45,6 +47,7 @@ pub struct MenuStyle {
 struct Columns {
   marker: usize,
   icon: bool,
+  mark: bool,
 }
 
 impl Columns {
@@ -59,7 +62,8 @@ impl Columns {
       .max()
       .unwrap_or(0);
     let icon = style.icons && rows.iter().any(|row| row.icon_glyph().is_some());
-    Self { marker, icon }
+    let mark = rows.iter().any(Row::is_marked);
+    Self { marker, icon, mark }
   }
 }
 
@@ -116,6 +120,12 @@ fn row_line<Id>(
 
   let base = row_style(row, is_selected, theme);
   let cursor = if is_selected { CURSOR } else { " " };
+  // The mark column is dropped entirely when no row of the list is marked.
+  let mark = if columns.mark {
+    mark_cell(row.is_marked())
+  } else {
+    String::new()
+  };
   let marker = marker_cell(row.kind(), columns.marker);
   let icon = if columns.icon {
     // Rows without an icon keep the column blank to stay aligned.
@@ -123,7 +133,7 @@ fn row_line<Id>(
   } else {
     String::new()
   };
-  let prefix = format!(" {cursor} {marker}{icon}");
+  let prefix = format!(" {cursor} {mark}{marker}{icon}");
 
   let suffix = if row.kind() == RowKind::Submenu {
     format!(" {SUBMENU_MARKER}")
@@ -172,6 +182,15 @@ fn section_line<Id>(row: &Row<Id>, width: usize, theme: &Theme) -> Line<'static>
     Span::styled(" ".repeat(padding), detail_style),
     Span::styled(detail, detail_style),
   ])
+}
+
+/// The default mark: `● ` on a marked row, blank otherwise.
+fn mark_cell(marked: bool) -> String {
+  if marked {
+    format!("{DEFAULT_MARK} ")
+  } else {
+    "  ".to_owned()
+  }
 }
 
 fn marker_cell(kind: RowKind, width: usize) -> String {
@@ -376,6 +395,44 @@ mod tests {
       "{:?}",
       screen[1]
     );
+  }
+
+  #[test]
+  fn default_mark_sits_before_the_state_marker_and_keeps_labels_aligned() {
+    let rows = vec![
+      Row::toggle(1u8, "br", true).marked(true),
+      Row::toggle(2u8, "us", true),
+      Row::toggle(3u8, "de", false),
+    ];
+    for icons_on in [true, false] {
+      let mut state = MenuState::default();
+      let screen = render(&rows, &mut state, 50, 3, icons_on);
+      assert!(screen[0].contains(&format!("{DEFAULT_MARK} {TOGGLE_ON} br")));
+      assert!(
+        screen[1].contains(&format!("  {TOGGLE_ON} us")),
+        "{:?}",
+        screen[1]
+      );
+      let label_column =
+        |line: &str, label: &str| line.find(label).map(|byte| display_width(&line[..byte]));
+      let br = label_column(&screen[0], "br");
+      assert_eq!(br, label_column(&screen[1], "us"), "icons_on={icons_on}");
+      assert_eq!(br, label_column(&screen[2], "de"), "icons_on={icons_on}");
+    }
+  }
+
+  #[test]
+  fn mark_column_is_absent_when_no_row_is_marked() {
+    let rows = vec![Row::toggle(1u8, "us", true)];
+    let mut state = MenuState::default();
+    let screen = render(&rows, &mut state, 40, 1, false);
+    assert!(screen[0].starts_with(" "), "{:?}", screen[0]);
+    assert!(
+      screen[0].contains(&format!(" {TOGGLE_ON} us")),
+      "{:?}",
+      screen[0]
+    );
+    assert!(!screen[0].contains(DEFAULT_MARK));
   }
 
   #[test]

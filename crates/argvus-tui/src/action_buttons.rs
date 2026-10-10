@@ -5,7 +5,7 @@
 use argvus_theme::Theme;
 use ratatui::Frame;
 use ratatui::layout::{Alignment, Rect};
-use ratatui::style::{Modifier, Style};
+use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::Paragraph;
 
@@ -70,6 +70,63 @@ impl ActionButton {
   }
 }
 
+/// Keyboard focus of an action bar placed under a list. The list has the
+/// focus by default; `Tab` moves it to the bar, where `←/→` step through the
+/// enabled buttons and the cursor holds the index of the focused one.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct ActionFocus {
+  cursor: Option<usize>,
+}
+
+impl ActionFocus {
+  /// Index of the focused button, or `None` while the list has the focus.
+  pub fn cursor(self) -> Option<usize> {
+    self.cursor
+  }
+
+  /// Gives the focus back to the list.
+  pub fn focus_list(&mut self) {
+    self.cursor = None;
+  }
+
+  /// `←/→`: the first press only moves the focus to the first enabled
+  /// button; later presses step through `enabled`, wrapping around.
+  /// `enabled` lists the indexes of the selectable buttons, in order.
+  pub fn move_by(&mut self, backwards: bool, enabled: &[usize]) {
+    let Some(&first) = enabled.first() else {
+      return;
+    };
+    let Some(current) = self.cursor else {
+      self.cursor = Some(first);
+      return;
+    };
+    let next = if backwards {
+      enabled
+        .iter()
+        .rev()
+        .find(|&&index| index < current)
+        .or(enabled.last())
+    } else {
+      enabled
+        .iter()
+        .find(|&&index| index > current)
+        .or(enabled.first())
+    };
+    if let Some(&index) = next {
+      self.cursor = Some(index);
+    }
+  }
+
+  /// `Tab`: moves the focus between the list and the bar.
+  pub fn toggle(&mut self, enabled: &[usize]) {
+    if self.cursor.is_some() {
+      self.focus_list();
+    } else {
+      self.move_by(false, enabled);
+    }
+  }
+}
+
 /// Executes the `height` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
 pub fn height(buttons: &[ActionButton], width: u16) -> u16 {
   if buttons.is_empty() {
@@ -110,6 +167,39 @@ pub fn draw_aligned(
   selected: usize,
   theme: &Theme,
   align: Alignment,
+) {
+  draw_bar(
+    frame,
+    area,
+    buttons,
+    selected,
+    theme,
+    align,
+    Some(theme.surface),
+  );
+}
+
+/// Like `draw_aligned`, but painted without a background: the bar shows
+/// whatever the page drew underneath it.
+pub fn draw_aligned_transparent(
+  frame: &mut Frame,
+  area: Rect,
+  buttons: &[ActionButton],
+  selected: usize,
+  theme: &Theme,
+  align: Alignment,
+) {
+  draw_bar(frame, area, buttons, selected, theme, align, None);
+}
+
+fn draw_bar(
+  frame: &mut Frame,
+  area: Rect,
+  buttons: &[ActionButton],
+  selected: usize,
+  theme: &Theme,
+  align: Alignment,
+  background: Option<Color>,
 ) {
   if buttons.is_empty() || area.width == 0 || area.height == 0 {
     return;
@@ -155,7 +245,7 @@ pub fn draw_aligned(
   frame.render_widget(
     Paragraph::new(lines)
       .alignment(align)
-      .style(Style::new().bg(theme.surface)),
+      .style(background.map_or_else(Style::new, |color| Style::new().bg(color))),
     area,
   );
 }
@@ -220,5 +310,40 @@ mod tests {
     let focused = style_for(&ActionButton::primary("🔧", "Primary", "C-p"), true, &theme);
     assert_ne!(primary, danger);
     assert!(focused.add_modifier.contains(Modifier::BOLD));
+  }
+
+  #[test]
+  fn tab_moves_focus_between_the_list_and_the_bar() {
+    let mut focus = ActionFocus::default();
+    focus.toggle(&[0]);
+    assert_eq!(
+      focus.cursor(),
+      Some(0),
+      "Tab focuses the first enabled button"
+    );
+    focus.toggle(&[0]);
+    assert_eq!(focus.cursor(), None, "Tab again gives the list the focus");
+  }
+
+  #[test]
+  fn arrows_step_through_enabled_buttons_and_wrap() {
+    let enabled = [0, 2];
+    let mut focus = ActionFocus::default();
+    focus.move_by(false, &enabled);
+    assert_eq!(focus.cursor(), Some(0), "first press only focuses the bar");
+    focus.move_by(false, &enabled);
+    assert_eq!(focus.cursor(), Some(2));
+    focus.move_by(false, &enabled);
+    assert_eq!(focus.cursor(), Some(0), "Right wraps to the first");
+    focus.move_by(true, &enabled);
+    assert_eq!(focus.cursor(), Some(2), "Left wraps to the last");
+  }
+
+  #[test]
+  fn no_enabled_button_means_no_focus() {
+    let mut focus = ActionFocus::default();
+    focus.toggle(&[]);
+    focus.move_by(false, &[]);
+    assert_eq!(focus.cursor(), None);
   }
 }
