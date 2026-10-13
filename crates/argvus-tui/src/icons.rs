@@ -187,6 +187,8 @@ pub const APPLY: &str = "\u{f0e1e}";
 pub const CANCEL: &str = "\u{f073a}";
 /// Nerd Fonts: nf-md-delete
 pub const DELETE: &str = "\u{f01b4}";
+/// Nerd Fonts: nf-md-content-copy
+pub const COPY: &str = "\u{f018f}";
 /// Nerd Fonts: nf-md-restore
 pub const RESTORE: &str = "\u{f099b}";
 /// Nerd Fonts: nf-md-import
