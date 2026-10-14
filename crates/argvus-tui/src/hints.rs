@@ -139,6 +139,7 @@ fn row_hints(kind: RowKind) -> Vec<Hint> {
     ],
     RowKind::Value { step: None } => vec![hint("Enter", HintAction::Edit)],
     // Never selected; listed for exhaustiveness.
+    RowKind::CollapsibleSection { .. } => vec![hint("Enter/Space", HintAction::Toggle)],
     RowKind::Info | RowKind::Separator => Vec::new(),
   }
 }

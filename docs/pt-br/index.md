@@ -30,7 +30,9 @@ Cada página é uma lista vertical única de linhas tipadas (`RowKind`):
 **Info** (rótulo e valor, nunca recebe foco), **Action**, **Submenu**
 (marcador `›`), **Toggle** (`[x]`/`[ ]`), **Choice** (`●` na opção atual),
 **Value** (Enter edita; `←/→` ajustam quando há passo), **Destructive**
-(sempre passa pela confirmação) e **Separator**. Cada linha carrega o
+(sempre passa pela confirmação), **Separator** e **CollapsibleSection** (título de seção com `▸`/`▾` que
+expande ou recolhe com `Enter`/`Espaço`; a página guarda o estado e deixa de fora as linhas de uma seção
+recolhida). Cada linha carrega o
 próprio ícone do catálogo `icons`; linhas Info não têm ícone decorativo.
 
 O cursor (`MenuState`) só para em linhas selecionáveis: Info, separadores e

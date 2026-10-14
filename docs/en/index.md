@@ -30,7 +30,9 @@ Every page is one vertical list of typed rows (`RowKind`): **Info** (label
 and value, never focused), **Action**, **Submenu** (`›` marker), **Toggle**
 (`[x]`/`[ ]`), **Choice** (`●` on the current option), **Value** (Enter
 edits; `←/→` adjust when it has a step), **Destructive** (always goes
-through the confirmation) and **Separator**. Each row carries its own icon
+through the confirmation), **Separator** and **CollapsibleSection** (a section title with `▸`/`▾` that
+expands or collapses on `Enter`/`Space`; the page keeps the state and leaves out the rows of a collapsed
+section). Each row carries its own icon
 from the `icons` catalog; Info rows have no decorative icon.
 
 The cursor (`MenuState`) only rests on selectable rows: Info rows,

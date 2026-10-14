@@ -25,6 +25,9 @@ pub enum RowKind {
   Destructive,
   /// Visual separator between groups of rows. Never receives focus.
   Separator,
+  /// A section title the cursor can reach. Enter/Space expands or collapses
+  /// it; the page decides which rows follow it, from the same state it stores.
+  CollapsibleSection { collapsed: bool },
 }
 
 impl RowKind {
@@ -133,6 +136,12 @@ impl<Id> Row<Id> {
   /// device's availability).
   pub fn section(title: impl Into<String>) -> Self {
     Self::new(None, RowKind::Separator, title)
+  }
+
+  /// A section title that expands or collapses on Enter/Space. The page keeps
+  /// the state and leaves out the rows of a collapsed section.
+  pub fn collapsible_section(id: Id, title: impl Into<String>, collapsed: bool) -> Self {
+    Self::new(Some(id), RowKind::CollapsibleSection { collapsed }, title)
   }
 
   /// Whether this is a section title rather than a plain divider.

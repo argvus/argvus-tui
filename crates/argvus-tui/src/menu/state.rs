@@ -221,6 +221,9 @@ fn activation_event<Id: Copy>(key: KeyCode, row: &Row<Id>) -> MenuEvent<Id> {
       MenuEvent::Toggle(id)
     }
     (RowKind::Destructive, KeyCode::Enter | KeyCode::Right) => MenuEvent::Confirm(id),
+    (RowKind::CollapsibleSection { .. }, KeyCode::Enter | KeyCode::Right | KeyCode::Char(' ')) => {
+      MenuEvent::Toggle(id)
+    }
     (
       RowKind::Action | RowKind::Submenu | RowKind::Choice { .. } | RowKind::Value { .. },
       KeyCode::Enter | KeyCode::Right,
@@ -431,6 +434,18 @@ mod tests {
     assert_eq!(state.selected_index(), Some(1));
     assert!(state.select(&rows, &5));
     assert_eq!(state.selected_index(), Some(5));
+  }
+
+  #[test]
+  fn collapsible_sections_take_focus_and_toggle_on_enter_or_space() {
+    let rows: Vec<Row<u8>> = vec![
+      Row::collapsible_section(0, "Generate key", true),
+      Row::action(1, "Generate"),
+    ];
+    assert!(rows[0].is_selectable());
+    let event = |index: usize, key: KeyCode| state_at(&rows, index).handle(key, &rows, 3);
+    assert_eq!(event(0, KeyCode::Enter), MenuEvent::Toggle(0));
+    assert_eq!(event(0, KeyCode::Char(' ')), MenuEvent::Toggle(0));
   }
 
   #[test]

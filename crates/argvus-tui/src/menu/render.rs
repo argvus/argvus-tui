@@ -33,6 +33,8 @@ const CHOICE_CURRENT: &str = "●";
 const DEFAULT_MARK: &str = "●";
 const SUBMENU_MARKER: &str = "›";
 const SEPARATOR_GLYPH: &str = "─";
+const COLLAPSED_GLYPH: &str = "▸";
+const EXPANDED_GLYPH: &str = "▾";
 
 /// Presentation options that come from the application configuration.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -108,6 +110,9 @@ fn row_line<Id>(
   width: usize,
   theme: &Theme,
 ) -> Line<'static> {
+  if let RowKind::CollapsibleSection { collapsed } = row.kind() {
+    return collapsible_line(row, collapsed, is_selected, width, theme);
+  }
   if row.is_section() {
     return section_line(row, width, theme);
   }
@@ -181,6 +186,39 @@ fn section_line<Id>(row: &Row<Id>, width: usize, theme: &Theme) -> Line<'static>
     Span::styled(label, title_style),
     Span::styled(" ".repeat(padding), detail_style),
     Span::styled(detail, detail_style),
+  ])
+}
+
+/// A collapsible section title: the cursor, a chevron that shows the state, and
+/// the title in the accent color. It keeps the highlight of a selected row.
+fn collapsible_line<Id>(
+  row: &Row<Id>,
+  collapsed: bool,
+  is_selected: bool,
+  width: usize,
+  theme: &Theme,
+) -> Line<'static> {
+  let chevron = if collapsed {
+    COLLAPSED_GLYPH
+  } else {
+    EXPANDED_GLYPH
+  };
+  let cursor = if is_selected { CURSOR } else { " " };
+  // A selected row keeps the selection colors: the accent would disappear on the
+  // selection background when the two colors are the same.
+  let style = if is_selected {
+    row_style(row, true, theme)
+  } else {
+    Style::new()
+      .fg(theme.accent)
+      .bg(theme.background)
+      .add_modifier(Modifier::BOLD)
+  };
+  let text = ellipsize(&format!("{cursor} {chevron} {}", row.label()), width);
+  let padding = width.saturating_sub(display_width(&text));
+  Line::from(vec![
+    Span::styled(text, style),
+    Span::styled(" ".repeat(padding), style),
   ])
 }
 
@@ -290,6 +328,36 @@ mod tests {
         .detail("Nord"),
       Row::action(4, "Refresh"),
     ]
+  }
+
+  #[test]
+  fn a_selected_collapsible_section_is_drawn_with_the_selection_colors() {
+    let rows: Vec<Row<u8>> = vec![
+      Row::collapsible_section(0, "Generate key", true),
+      Row::action(1, "Go"),
+    ];
+    let theme = Theme::load();
+    let mut terminal = Terminal::new(TestBackend::new(40, 4)).unwrap();
+    let mut state = MenuState::default();
+    terminal
+      .draw(|frame| {
+        draw_menu(
+          frame,
+          Rect::new(0, 0, 40, 4),
+          &theme,
+          &rows,
+          &mut state,
+          MenuStyle { icons: false },
+        );
+      })
+      .unwrap();
+    let buffer = terminal.backend().buffer().clone();
+    let title = (0..40)
+      .map(|x| buffer.cell((x, 0)).expect("cell inside the buffer"))
+      .find(|cell| cell.symbol() == "G")
+      .expect("the section title is drawn on the first row");
+    assert_eq!(title.fg, theme.selected_foreground);
+    assert_eq!(title.bg, theme.selected_background);
   }
 
   #[test]
