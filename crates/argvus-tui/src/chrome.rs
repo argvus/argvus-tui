@@ -186,7 +186,7 @@ mod tests {
           Rect::new(0, 0, 120, 1),
           &theme,
           Header {
-            title: "Control Center > Locale e Região",
+            title: "sample > header",
             version: Some("0.1.0"),
             version_label: "v",
           },

@@ -2,6 +2,7 @@
 //!
 //! External tool dependencies remain in backend layers;
 //! the UI consumes normalized models and results.
+use argvus_i18n::{Lang, tr};
 use argvus_theme::Theme;
 use crossterm::event::KeyCode;
 use ratatui::{
@@ -16,7 +17,18 @@ use crate::chrome::{Header, draw_footer, draw_header};
 use crate::components::StatusMessage;
 
 /// The common shell used by every Control Center domain page.
-pub fn shell(frame: &mut Frame, area: Rect, theme: &Theme, breadcrumb: &str, hints: &str) -> Rect {
+///
+/// The header is `<root> > <breadcrumb>`. The root comes from the catalog key
+/// `control_center.breadcrumb.root`, resolved in `lang`; `breadcrumb` is the
+/// already translated path below the root, such as `Hardware & Connectivity > Audio`.
+pub fn shell(
+  frame: &mut Frame,
+  area: Rect,
+  theme: &Theme,
+  lang: Lang,
+  breadcrumb: &str,
+  hints: &str,
+) -> Rect {
   Block::new()
     .borders(Borders::ALL)
     .border_style(Style::new().fg(theme.border_active))
@@ -29,7 +41,10 @@ pub fn shell(frame: &mut Frame, area: Rect, theme: &Theme, breadcrumb: &str, hin
     Constraint::Length(2),
   ])
   .split(inner);
-  let title = format!("Control Center > {breadcrumb}");
+  let title = format!(
+    "{} > {breadcrumb}",
+    tr(lang, "control_center.breadcrumb.root")
+  );
   draw_header(
     frame,
     rows[0],
@@ -154,6 +169,27 @@ impl Selection {
 mod tests {
   use super::*;
   use ratatui::{Terminal, backend::TestBackend};
+
+  #[test]
+  /// The shell header root is a catalog key, so it must exist and differ
+  /// between en-US and pt-BR in the sibling `argvus-i18n` checkout.
+  fn shell_root_is_translated_in_en_us_and_pt_br() {
+    let locales =
+      std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../argvus-i18n/locales");
+    let root = |locale: &str| {
+      let path = locales.join(locale).join("control-center.json");
+      let content = std::fs::read_to_string(&path)
+        .unwrap_or_else(|error| panic!("{}: {error}", path.display()));
+      let catalog: serde_json::Value = serde_json::from_str(&content).unwrap();
+      catalog
+        .get("control_center.breadcrumb.root")
+        .and_then(serde_json::Value::as_str)
+        .map(str::to_owned)
+        .unwrap_or_else(|| panic!("{locale} misses control_center.breadcrumb.root"))
+    };
+    assert_eq!(root("en-US"), "Control Center");
+    assert_eq!(root("pt-BR"), "Central de Controle");
+  }
 
   #[test]
   /// Executes the `selection_is_bounded_and_supports_navigation` step in this module. The behavior is encapsulated here so callers depend on a clear domain decision instead of duplicating system or UI details.
