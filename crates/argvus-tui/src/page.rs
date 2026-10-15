@@ -59,9 +59,12 @@ pub fn list(frame: &mut Frame, area: Rect, theme: &Theme, rows: &[String], selec
   } else {
     selected.saturating_sub(height - 1).min(len - height)
   };
+  // Only the viewport is built: a long list costs the same per frame as a short one.
   let lines = rows
     .iter()
     .enumerate()
+    .skip(scroll)
+    .take(height)
     .map(|(index, row)| {
       let chosen = !no_selection && index == selected;
       let style = if chosen {
@@ -80,9 +83,7 @@ pub fn list(frame: &mut Frame, area: Rect, theme: &Theme, rows: &[String], selec
     })
     .collect::<Vec<_>>();
   frame.render_widget(
-    Paragraph::new(lines)
-      .scroll((scroll as u16, 0))
-      .style(Style::new().bg(theme.background)),
+    Paragraph::new(lines).style(Style::new().bg(theme.background)),
     area.inner(Margin::new(1, 0)),
   );
 }
