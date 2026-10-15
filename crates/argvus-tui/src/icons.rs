@@ -147,6 +147,8 @@ pub const WINDOW_FLOAT: &str = "\u{f05b2}";
 pub const WINDOW_STICKY: &str = "\u{f0bcc}";
 /// Nerd Fonts: nf-md-window-open
 pub const WINDOW_RULES: &str = "\u{f05b1}";
+/// Nerd Fonts: nf-md-wrench
+pub const WRENCH: &str = "\u{f05b7}";
 /// Nerd Fonts: nf-md-folder-multiple
 pub const PROJECTS: &str = "\u{f0253}";
 /// Nerd Fonts: nf-md-format-color-fill
@@ -381,6 +383,7 @@ mod tests {
     WINDOW_FLOAT,
     WINDOW_STICKY,
     WINDOW_RULES,
+    WRENCH,
     PROJECTS,
     ACCENT,
     ARROW_UP,
